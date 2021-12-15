@@ -15,6 +15,16 @@ type UserSession struct {
 	CreatedAt    *time.Time `json:"created_at"`
 	UpdatedAt    *time.Time `json:"updated_at"`
 	ExpiredAt    *time.Time `json:"expired_at"`
+
+	User *User `json:"-"`
+}
+
+func (us UserSession) GetUserRole() string {
+	if us.User == nil {
+		return ""
+	}
+
+	return string(us.User.Role)
 }
 
 // Claims token's claims/payload.
@@ -22,7 +32,7 @@ type Claims struct {
 	SessionID uuid.UUID
 	TokenID   uuid.UUID
 	UserID    int
-	UserRole  int
+	UserRole  UserRole
 
 	jwt.StandardClaims
 }
@@ -34,11 +44,11 @@ func (c *Claims) TTL() int64 {
 
 // swagger:model
 type RegistrationRequest struct {
-	FirstName string `json:"first_name" validate:"gte=2,lte=70,required"`
-	LastName  string `json:"last_name" validate:"gte=2,lte=70,required"`
-	Email     string `json:"email" validate:"email,required"`
-	Password  string `json:"password" validate:"required,gte=8,lte=32"`
-	RoleID    int    `json:"role_id" validate:"required"`
+	FirstName string   `json:"first_name" validate:"gte=2,lte=70,required"`
+	LastName  string   `json:"last_name" validate:"gte=2,lte=70,required"`
+	Email     string   `json:"email" validate:"email,required"`
+	Password  string   `json:"password" validate:"required,gte=8,lte=32"`
+	Role      UserRole `json:"role" validate:"required"`
 }
 
 type RegistrationResponse struct {

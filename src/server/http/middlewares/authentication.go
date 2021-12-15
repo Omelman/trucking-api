@@ -25,6 +25,7 @@ func Auth(next http.Handler) http.Handler {
 		}
 
 		ctx := reqContext.WithUserID(r.Context(), loginSes.UserID)
+		ctx = reqContext.WithUserRole(ctx, loginSes.GetUserRole())
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})

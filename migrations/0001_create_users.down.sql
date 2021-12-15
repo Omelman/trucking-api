@@ -1,6 +1,5 @@
 BEGIN;
 
 DROP TABLE users;
-DROP TABLE roles;
 
 COMMIT;

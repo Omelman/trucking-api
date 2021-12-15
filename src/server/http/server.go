@@ -15,9 +15,8 @@ import (
 
 	"github.com/Omelman/trucking-api/src/config"
 	"github.com/Omelman/trucking-api/src/server/handlers"
-	middleware "github.com/Omelman/trucking-api/src/server/http/middlewares"
-
 	healthcheck "github.com/Omelman/trucking-api/src/server/health-check"
+	middleware "github.com/Omelman/trucking-api/src/server/http/middlewares"
 )
 
 const (
@@ -77,6 +76,9 @@ func (s *Server) buildHandler() (http.Handler, error) {
 		publicChain  = alice.New()
 		privateChain = publicChain.
 				Append(middleware.Auth)
+
+		//	owner    = privateChain.Append(policy.Owner)
+		//	customer = privateChain.Append(policy.Customer)
 	)
 
 	// public routes

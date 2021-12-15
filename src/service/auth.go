@@ -197,20 +197,6 @@ func (s *Service) Revoke(accessToken string) (*models.Claims, error) {
 	return claims, nil
 }
 
-// Generate generates token with claims
-func (s *Service) Generate(claims *models.Claims) (string, error) {
-	claims.StandardClaims.ExpiresAt = time.Now().Unix() + getExpiredAt(s.cfg.AccessTokenTTL).Unix()
-
-	tokenWithClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
-	token, err := tokenWithClaims.SignedString([]byte(s.cfg.AccessTokenSecret))
-	if err != nil {
-		return "", err
-	}
-
-	return token, nil
-}
-
 func (s *Service) createToken(
 	ctx context.Context,
 	user models.User,
@@ -224,10 +210,10 @@ func (s *Service) createToken(
 		SessionID: session.ID,
 		TokenID:   session.TokenID,
 		UserID:    user.ID,
-		UserRole:  user.RoleID,
+		UserRole:  user.Role,
 	}
 
-	jwtToken, err := s.Generate(&claims)
+	jwtToken, err := s.GenerateAccess(&claims)
 	if err != nil {
 		return nil, errors.Wrap(err, "generate jwt token")
 	}

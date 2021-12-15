@@ -175,7 +175,7 @@ func (h *AuthHandler) Create(w http.ResponseWriter, r *http.Request) {
 		LastName:  usrReq.LastName,
 		Password:  usrReq.Password,
 		Email:     usrReq.Email,
-		RoleID:    usrReq.RoleID,
+		Role:      usrReq.Role,
 		CreatedAt: time.Now().UTC(),
 		UpdatedAt: time.Now().UTC(),
 	}

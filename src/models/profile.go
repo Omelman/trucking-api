@@ -4,25 +4,22 @@ import (
 	"time"
 )
 
+type UserRole string
+
+// User statuses enum.
+const (
+	UserRoleCustomer UserRole = "Customer"
+	UserRoleOwner    UserRole = "Owner"
+)
+
 type User struct {
-	ID        int    `json:"id"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Password  string `json:"password"`
-	Email     string `json:"email"`
-	Language  string `json:"language" default:"en-us"`
-	RoleID    int    `json:"role_id"`
-
-	CreatedAt time.Time `json:"-"`
-	UpdatedAt time.Time `json:"-"`
-
-	Role *Role `json:"-" bun:"-"`
-}
-
-type Role struct {
-	ID       int    `json:"id"`
-	Name     string `json:"name"`
-	Editable bool   `json:"-"`
+	ID        int      `json:"id"`
+	FirstName string   `json:"first_name"`
+	LastName  string   `json:"last_name"`
+	Password  string   `json:"password"`
+	Email     string   `json:"email"`
+	Language  string   `json:"language" default:"en-us"`
+	Role      UserRole `json:"role"`
 
 	CreatedAt time.Time `json:"-"`
 	UpdatedAt time.Time `json:"-"`

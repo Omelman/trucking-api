@@ -5,9 +5,10 @@ import (
 )
 
 const (
-	userIDKey = "device_id"
-	localeKey = "locale"
-	userIPKey = "user_ip"
+	userIDKey   = "device_id"
+	localeKey   = "locale"
+	userIPKey   = "user_ip"
+	userRoleKey = "user_role"
 )
 
 // GetUserID - returns User UID from context.
@@ -44,4 +45,15 @@ func GetUserIP(ctx context.Context) string {
 // WithUserIP - add User IP value to context.
 func WithUserIP(ctx context.Context, value string) context.Context {
 	return context.WithValue(ctx, userIPKey, value) //nolint
+}
+
+// GetUserRole - returns User role from context.
+func GetUserRole(ctx context.Context) string {
+	value, _ := ctx.Value(userRoleKey).(string)
+	return value
+}
+
+// WithUserRole - add User role value to context.
+func WithUserRole(ctx context.Context, value string) context.Context {
+	return context.WithValue(ctx, userRoleKey, value) // nolint:golint,staticcheck
 }
