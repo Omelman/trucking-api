@@ -50,6 +50,8 @@ func main() {
 	httpSrv, err := http.New(
 		&cfg.HTTPConfig,
 		handlers.NewAuthHandler(srv),
+		handlers.NewShipmentHandler(srv),
+		handlers.NewVehicleHandler(srv),
 	)
 
 	if err != nil {

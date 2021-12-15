@@ -17,6 +17,7 @@ import (
 	"github.com/Omelman/trucking-api/src/server/handlers"
 	healthcheck "github.com/Omelman/trucking-api/src/server/health-check"
 	middleware "github.com/Omelman/trucking-api/src/server/http/middlewares"
+	"github.com/Omelman/trucking-api/src/server/http/middlewares/policy"
 )
 
 const (
@@ -31,11 +32,15 @@ type Server struct {
 	config *config.HTTP
 
 	// handlers
-	auh *handlers.AuthHandler
+	auh  *handlers.AuthHandler
+	ship *handlers.ShipmentHandler
+	veh  *handlers.VehicleHandler
 }
 
 func New(cfg *config.HTTP,
 	authHandler *handlers.AuthHandler,
+	shipHandler *handlers.ShipmentHandler,
+	vehHandler *handlers.VehicleHandler,
 ) (*Server, error) {
 	httpSrv := http.Server{
 		Addr: fmt.Sprintf(":%d", cfg.Port),
@@ -45,6 +50,8 @@ func New(cfg *config.HTTP,
 	srv := Server{
 		config: cfg,
 		auh:    authHandler,
+		ship:   shipHandler,
+		veh:    vehHandler,
 	}
 
 	if err := srv.setupHTTP(&httpSrv); err != nil {
@@ -77,8 +84,8 @@ func (s *Server) buildHandler() (http.Handler, error) {
 		privateChain = publicChain.
 				Append(middleware.Auth)
 
-		//	owner    = privateChain.Append(policy.Owner)
-		//	customer = privateChain.Append(policy.Customer)
+		owner    = privateChain.Append(policy.Owner)
+		customer = privateChain.Append(policy.Customer)
 	)
 
 	// public routes
@@ -86,6 +93,12 @@ func (s *Server) buildHandler() (http.Handler, error) {
 	v1Router.Handle("/login", publicChain.ThenFunc(s.auh.Login)).Methods(http.MethodPost)
 	v1Router.Handle("/token", publicChain.ThenFunc(s.auh.TokenRefresh)).Methods(http.MethodPost)
 	v1Router.Handle("/users/register", publicChain.ThenFunc(s.auh.Create)).Methods(http.MethodPost)
+
+	// customer routes
+	v1Router.Handle("/shipment", customer.ThenFunc(s.ship.CreateShipment)).Methods(http.MethodPost)
+
+	// owner routes
+	v1Router.Handle("/vehicle", owner.ThenFunc(s.veh.CreateVehicle)).Methods(http.MethodPost)
 
 	// private routes
 	v1Router.Handle("/logout", privateChain.ThenFunc(s.auh.Logout)).Methods(http.MethodDelete)

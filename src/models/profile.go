@@ -8,8 +8,8 @@ type UserRole string
 
 // User statuses enum.
 const (
-	UserRoleCustomer UserRole = "Customer"
-	UserRoleOwner    UserRole = "Owner"
+	UserRoleCustomer UserRole = "customer"
+	UserRoleOwner    UserRole = "owner"
 )
 
 type User struct {
@@ -18,7 +18,7 @@ type User struct {
 	LastName  string   `json:"last_name"`
 	Password  string   `json:"password"`
 	Email     string   `json:"email"`
-	Language  string   `json:"language" default:"en-us"`
+	Language  string   `json:"language"`
 	Role      UserRole `json:"role"`
 
 	CreatedAt time.Time `json:"-"`

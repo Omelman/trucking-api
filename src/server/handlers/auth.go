@@ -178,6 +178,7 @@ func (h *AuthHandler) Create(w http.ResponseWriter, r *http.Request) {
 		Role:      usrReq.Role,
 		CreatedAt: time.Now().UTC(),
 		UpdatedAt: time.Now().UTC(),
+		Language:  usrReq.Language,
 	}
 
 	err = h.service.CreateUser(ctx, user)

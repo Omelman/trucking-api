@@ -16,7 +16,7 @@ type UserSession struct {
 	UpdatedAt    *time.Time `json:"updated_at"`
 	ExpiredAt    *time.Time `json:"expired_at"`
 
-	User *User `json:"-"`
+	User *User `json:"-" bun:"rel:belongs-to,join:user_id=id"`
 }
 
 func (us UserSession) GetUserRole() string {
@@ -44,11 +44,12 @@ func (c *Claims) TTL() int64 {
 
 // swagger:model
 type RegistrationRequest struct {
-	FirstName string   `json:"first_name" validate:"gte=2,lte=70,required"`
-	LastName  string   `json:"last_name" validate:"gte=2,lte=70,required"`
+	FirstName string   `json:"first_name" validate:"gte=4,lte=70,required"`
+	LastName  string   `json:"last_name" validate:"gte=4,lte=70,required"`
 	Email     string   `json:"email" validate:"email,required"`
 	Password  string   `json:"password" validate:"required,gte=8,lte=32"`
 	Role      UserRole `json:"role" validate:"required"`
+	Language  string   `json:"language" validate:"required,gte=2,lte=4"`
 }
 
 type RegistrationResponse struct {

@@ -29,6 +29,9 @@ func (s *Service) Validate(accessToken string) (*models.UserSession, error) {
 	return &models.UserSession{
 		UserID:  claims.UserID,
 		TokenID: claims.TokenID,
+		User: &models.User{
+			Role: claims.UserRole,
+		},
 	}, nil
 }
 
