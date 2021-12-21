@@ -18,10 +18,10 @@ func (p *Postgres) NewAuthRepo() *AuthRepo {
 }
 
 func (ar *AuthRepo) CreateSession(ctx context.Context, session *models.UserSession) (*models.UserSession, error) {
-	_, err := ar.DB.NewInsert().
+	_, err := ar.WithContext(ctx).
 		Model(session).
 		Returning("*").
-		Exec(ctx)
+		Insert()
 
 	return session, err
 }
@@ -32,30 +32,29 @@ func (ar *AuthRepo) DisableSessionByID(ctx context.Context, sessionID uuid.UUID)
 		ID:        sessionID,
 		ExpiredAt: &expiredAt,
 	}
-	_, err := ar.DB.NewUpdate().
+	_, err := ar.WithContext(ctx).
 		Model(&session).
 		WherePK().
-		OmitZero().
-		Exec(ctx)
+		UpdateNotZero()
 
 	return err
 }
 
 func (ar *AuthRepo) GetSessionByTokenID(ctx context.Context, tokenID uuid.UUID) (*models.UserSession, error) {
 	session := &models.UserSession{}
-	err := ar.DB.NewSelect().Model(session).
+	err := ar.WithContext(ctx).Model(session).
 		Where("token_id = ?", tokenID).
 		Limit(1).
-		Scan(ctx)
+		Select()
 
 	return session, err
 }
 
 func (ar *AuthRepo) UpdateSession(ctx context.Context, userSession *models.UserSession) error {
-	_, err := ar.DB.NewUpdate().
+	_, err := ar.WithContext(ctx).
 		Model(userSession).
 		WherePK().
-		Exec(ctx)
+		Update()
 
 	return err
 }

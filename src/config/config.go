@@ -1,9 +1,5 @@
 package config
 
-import (
-	"time"
-)
-
 type Config struct {
 	LogLevel          string   `mapstructure:"LOG_LEVEL" default:"DEBUG"`
 	HTTPConfig        HTTP     `mapstructure:"HTTP_SERVER"`
@@ -24,15 +20,15 @@ type HTTP struct {
 }
 
 type Postgres struct {
-	Host         string        `mapstructure:"HOST"          default:"localhost"`
-	Port         string        `mapstructure:"PORT"          default:"5432"`
-	SSLMode      bool          `mapstructure:"SSL_MODE"      default:"false"`
-	Name         string        `mapstructure:"NAME"          default:"postgres"`
-	User         string        `mapstructure:"USER"          default:"postgres"`
-	Password     string        `mapstructure:"PASSWORD"      default:"12345"`
-	PoolSize     int           `mapstructure:"POOL_SIZE"     default:"10"`
-	MaxRetries   int           `mapstructure:"MAX_RETRIES"   default:"5"`
-	ReadTimeout  time.Duration `mapstructure:"READ_TIMEOUT"  default:"10s"`
-	WriteTimeout time.Duration `mapstructure:"WRITE_TIMEOUT" default:"10s"`
-	EnableLogger bool          `mapstructure:"ENABLE_LOGGER" default:"true"`
+	Host         string `mapstructure:"HOST"          default:"localhost"`
+	Port         string `mapstructure:"PORT"          default:"5432"`
+	SSLMode      bool   `mapstructure:"SSL_MODE"      default:"false"`
+	Name         string `mapstructure:"NAME"          default:"postgres"`
+	User         string `mapstructure:"USER"          default:"postgres"`
+	Password     string `mapstructure:"PASSWORD"      default:"12345"`
+	PoolSize     int    `mapstructure:"POOL_SIZE"     default:"10"`
+	MaxRetries   int    `mapstructure:"MAX_RETRIES"   default:"5"`
+	ReadTimeout  string `mapstructure:"READ_TIMEOUT"  default:"10s"`
+	WriteTimeout string `mapstructure:"WRITE_TIMEOUT" default:"10s"`
+	EnableLogger bool   `mapstructure:"ENABLE_LOGGER" default:"true"`
 }

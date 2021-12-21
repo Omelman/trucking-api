@@ -45,6 +45,7 @@ func main() {
 		&cfg,
 		db.NewAuthRepo(),
 		db.NewProfileRepo(),
+		db.NewVehicleRepo(),
 	)
 
 	httpSrv, err := http.New(

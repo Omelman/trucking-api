@@ -2,40 +2,45 @@ package postgres
 
 import (
 	"context"
-	"database/sql"
-	"fmt"
 	"sync"
+	"time"
 
+	"github.com/go-pg/pg/v10"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
-	"github.com/uptrace/bun"
-	"github.com/uptrace/bun/dialect/pgdialect"
-	"github.com/uptrace/bun/driver/pgdriver"
 
 	"github.com/Omelman/trucking-api/src/config"
 )
 
 // Postgres bun connection.
 type Postgres struct {
-	DB  *bun.DB
+	*pg.DB
 	ctx context.Context
 }
 
-func New(ctx context.Context, wg *sync.WaitGroup, mainCfg *config.Postgres) (*Postgres, error) {
-	pgconn := pgdriver.NewConnector(
-		pgdriver.WithNetwork("tcp"),
-		pgdriver.WithAddr(fmt.Sprintf("%s:%s", mainCfg.Host, mainCfg.Port)),
-		pgdriver.WithUser(mainCfg.User),
-		pgdriver.WithPassword(mainCfg.Password),
-		pgdriver.WithDatabase(mainCfg.Name),
-		pgdriver.WithReadTimeout(mainCfg.ReadTimeout),
-		pgdriver.WithWriteTimeout(mainCfg.WriteTimeout),
-		pgdriver.WithInsecure(mainCfg.SSLMode),
-	)
-	sqldb := sql.OpenDB(pgconn)
+func New(ctx context.Context, wg *sync.WaitGroup, cfg *config.Postgres) (*Postgres, error) {
+	writeTimeout, err := time.ParseDuration(cfg.WriteTimeout)
+	if err != nil {
+		return nil, errors.Wrap(err, "write timeout")
+	}
 
-	db := bun.NewDB(sqldb, pgdialect.New())
+	readTimeout, err := time.ParseDuration(cfg.ReadTimeout)
+	if err != nil {
+		return nil, errors.Wrap(err, "read timeout")
+	}
 
-	p := &Postgres{DB: db, ctx: ctx}
+	conn := pg.Connect(&pg.Options{
+		Addr:         cfg.Host + ":" + cfg.Port,
+		User:         cfg.User,
+		Password:     cfg.Password,
+		Database:     cfg.Name,
+		PoolSize:     cfg.PoolSize,
+		WriteTimeout: writeTimeout,
+		ReadTimeout:  readTimeout,
+		MaxRetries:   cfg.MaxRetries,
+	})
+
+	p := &Postgres{DB: conn, ctx: ctx}
 
 	wg.Add(1)
 
@@ -43,7 +48,7 @@ func New(ctx context.Context, wg *sync.WaitGroup, mainCfg *config.Postgres) (*Po
 		defer wg.Done()
 		<-ctx.Done()
 
-		err := db.Close()
+		err := conn.Close()
 		if err != nil {
 			log.Error("close db connection error:", err.Error())
 
@@ -53,10 +58,5 @@ func New(ctx context.Context, wg *sync.WaitGroup, mainCfg *config.Postgres) (*Po
 		log.Info("close db connection")
 	}()
 
-	return p, nil
-}
-
-// Check checks db connection.
-func (p *Postgres) Check() (err error) {
-	return p.DB.Ping()
+	return p, p.Ping(ctx)
 }

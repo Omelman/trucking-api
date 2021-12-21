@@ -17,17 +17,18 @@ func (p *Postgres) NewProfileRepo() *ProfileRepo {
 func (p *ProfileRepo) GetProfilesByEmail(ctx context.Context, email string) (models.User, error) {
 	var res models.User
 
-	err := p.DB.NewSelect().
+	err := p.WithContext(ctx).
 		Model(&res).
 		Where("?TableAlias.email = ?", email).
-		Scan(ctx)
+		Select()
 
 	return res, toServiceError(err)
 }
 
 func (p *ProfileRepo) AddNewProfile(ctx context.Context, newUser *models.User) (*models.User, error) {
-
-	_, err := p.DB.NewInsert().Model(newUser).Exec(ctx)
+	_, err := p.WithContext(ctx).
+		Model(newUser).
+		Insert()
 
 	return newUser, toServiceError(err)
 }

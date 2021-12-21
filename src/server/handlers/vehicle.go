@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/Omelman/trucking-api/src/models"
 	"github.com/Omelman/trucking-api/src/service"
 )
 
@@ -17,7 +18,43 @@ func NewVehicleHandler(s *service.Service) *VehicleHandler {
 }
 
 func (h *VehicleHandler) CreateVehicle(w http.ResponseWriter, r *http.Request) {
-	// logic
+	req := &models.Vehicle{}
+
+	err := UnmarshalRequest(r, req)
+	if err != nil {
+		SendEmptyResponse(w, http.StatusBadRequest)
+
+		return
+	}
+
+	err = h.service.CreateVehicle(r.Context(), req)
+	if err != nil {
+		SendEmptyResponse(w, http.StatusInternalServerError)
+
+		return
+	}
+
+	SendEmptyResponse(w, http.StatusOK)
+}
+
+func (h *VehicleHandler) UpdateVehicle(w http.ResponseWriter, r *http.Request) {
+	req := &models.Vehicle{}
+
+	err := UnmarshalRequest(r, req)
+	if err != nil {
+		SendEmptyResponse(w, http.StatusBadRequest)
+
+		return
+	}
+
+	err = h.service.UpdateVehicle(r.Context(), req)
+	if err != nil {
+		SendEmptyResponse(w, http.StatusInternalServerError)
+
+		return
+	}
+
+	SendEmptyResponse(w, http.StatusOK)
 }
 
 func (h *VehicleHandler) GetVehicle(w http.ResponseWriter, r *http.Request) {

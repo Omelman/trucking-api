@@ -19,18 +19,21 @@ type Service struct {
 	cfg         *config.Config
 	authRepo    AuthRepo
 	profileRepo ProfileRepo
+	vehicleRepo VehicleRepo
 }
 
 func New(
 	cfg *config.Config,
 	aur AuthRepo,
 	pr ProfileRepo,
+	vr VehicleRepo,
 ) *Service {
 	once.Do(func() {
 		service = &Service{
 			cfg:         cfg,
 			authRepo:    aur,
 			profileRepo: pr,
+			vehicleRepo: vr,
 		}
 	})
 
@@ -56,4 +59,9 @@ type ProfileRepo interface {
 type Encryptor interface {
 	EncryptPassword(password string) (string, error)
 	CompareHashAndPassword(password, hash string) bool
+}
+
+type VehicleRepo interface {
+	CreateVehicle(ctx context.Context, newVehicle *models.Vehicle) (*models.Vehicle, error)
+	UpdateVehicle(ctx context.Context, vehicle *models.Vehicle) (*models.Vehicle, error)
 }

@@ -10,6 +10,8 @@ const (
 )
 
 type Shipment struct {
+	tableName struct{} `pg:"shipment"`
+
 	ID        int            `json:"id"`
 	Status    ShipmentStatus `json:"status"`
 	VehicleID int            `json:"vehicle_id"`
