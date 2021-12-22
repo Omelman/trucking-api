@@ -32,14 +32,14 @@ type Server struct {
 	config *config.HTTP
 
 	// handlers
-	auh  *handlers.AuthHandler
-	ship *handlers.ShipmentHandler
-	veh  *handlers.VehicleHandler
+	auh *handlers.AuthHandler
+	itm *handlers.ItemHandler
+	veh *handlers.VehicleHandler
 }
 
 func New(cfg *config.HTTP,
 	authHandler *handlers.AuthHandler,
-	shipHandler *handlers.ShipmentHandler,
+	itmHandler *handlers.ItemHandler,
 	vehHandler *handlers.VehicleHandler,
 ) (*Server, error) {
 	httpSrv := http.Server{
@@ -50,7 +50,7 @@ func New(cfg *config.HTTP,
 	srv := Server{
 		config: cfg,
 		auh:    authHandler,
-		ship:   shipHandler,
+		itm:    itmHandler,
 		veh:    vehHandler,
 	}
 
@@ -95,10 +95,14 @@ func (s *Server) buildHandler() (http.Handler, error) {
 	v1Router.Handle("/users/register", publicChain.ThenFunc(s.auh.Create)).Methods(http.MethodPost)
 
 	// customer routes
-	v1Router.Handle("/shipment", customer.ThenFunc(s.ship.CreateShipment)).Methods(http.MethodPost)
+	v1Router.Handle("/item", customer.ThenFunc(s.itm.CreateItem)).Methods(http.MethodPost)
 
 	// owner routes
 	v1Router.Handle("/vehicle", owner.ThenFunc(s.veh.CreateVehicle)).Methods(http.MethodPost)
+	v1Router.Handle("/vehicle", owner.ThenFunc(s.veh.UpdateVehicle)).Methods(http.MethodPut)
+	v1Router.Handle("/vehicle", owner.ThenFunc(s.veh.GetVehicle)).Methods(http.MethodGet)
+	v1Router.Handle("/users/vehicle", owner.ThenFunc(s.veh.GetAllOwnerVehicle)).Methods(http.MethodGet)
+	v1Router.Handle("/users/vehicle/{vehicle_id:[0-9]+}", owner.ThenFunc(s.veh.DeleteUserVehicle)).Methods(http.MethodDelete)
 
 	// private routes
 	v1Router.Handle("/logout", privateChain.ThenFunc(s.auh.Logout)).Methods(http.MethodDelete)

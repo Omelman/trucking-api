@@ -46,12 +46,13 @@ func main() {
 		db.NewAuthRepo(),
 		db.NewProfileRepo(),
 		db.NewVehicleRepo(),
+		db.NewItemRepo(),
 	)
 
 	httpSrv, err := http.New(
 		&cfg.HTTPConfig,
 		handlers.NewAuthHandler(srv),
-		handlers.NewShipmentHandler(srv),
+		handlers.NewItemHandler(srv),
 		handlers.NewVehicleHandler(srv),
 	)
 

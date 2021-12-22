@@ -14,9 +14,11 @@ const (
 )
 
 type Item struct {
+	tableName struct{} `pg:"item"`
+
 	ID          int          `json:"id"`
 	Description string       `json:"description"`
-	Quantity    string       `json:"quantity"`
+	Quantity    int          `json:"quantity"`
 	Volume      int          `json:"volume"`
 	Weight      int          `json:"weight"`
 	Category    ItemCategory `json:"category"`
@@ -25,6 +27,6 @@ type Item struct {
 
 	Date *time.Time `json:"date"`
 
-	User     *User     `json:"-"`
-	Shipment *Shipment `json:"-"`
+	User     *User     `json:"-" fk:"user_id"`
+	Shipment *Shipment `json:"-" fk:"shipment_id"`
 }

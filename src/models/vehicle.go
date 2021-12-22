@@ -27,5 +27,5 @@ type Vehicle struct {
 
 	CreatedAt time.Time `json:"-"`
 
-	User *User `json:"-"`
+	Owner *User `json:"-" pg:"fk:owner_id"`
 }

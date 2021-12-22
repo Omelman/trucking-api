@@ -9,9 +9,10 @@ create table item
     volume      int,
     weight      int,
     date        timestamp                   not null,
-    shipment_id bigserial REFERENCES shipment (id),
     user_id     bigserial REFERENCES users (id)
-        ON DELETE CASCADE ON UPDATE CASCADE NOT NULL
+        ON DELETE CASCADE ON UPDATE CASCADE NOT NULL,
+    shipment_id bigint REFERENCES shipment (id)
+        ON UPDATE CASCADE ON DELETE SET NULL
 );
 
 create table destination

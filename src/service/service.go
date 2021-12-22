@@ -20,6 +20,7 @@ type Service struct {
 	authRepo    AuthRepo
 	profileRepo ProfileRepo
 	vehicleRepo VehicleRepo
+	itemRepo    ItemRepo
 }
 
 func New(
@@ -27,6 +28,7 @@ func New(
 	aur AuthRepo,
 	pr ProfileRepo,
 	vr VehicleRepo,
+	it ItemRepo,
 ) *Service {
 	once.Do(func() {
 		service = &Service{
@@ -34,6 +36,7 @@ func New(
 			authRepo:    aur,
 			profileRepo: pr,
 			vehicleRepo: vr,
+			itemRepo:    it,
 		}
 	})
 
@@ -64,4 +67,11 @@ type Encryptor interface {
 type VehicleRepo interface {
 	CreateVehicle(ctx context.Context, newVehicle *models.Vehicle) (*models.Vehicle, error)
 	UpdateVehicle(ctx context.Context, vehicle *models.Vehicle) (*models.Vehicle, error)
+	GetAllVehicles(ctx context.Context) ([]models.Vehicle, error)
+	GetUserVehicles(ctx context.Context, userID int) ([]models.Vehicle, error)
+	DeleteVehicle(ctx context.Context, vehicleID int) error
+}
+
+type ItemRepo interface {
+	CreateItem(ctx context.Context, newItem *models.Item) (*models.Item, error)
 }
