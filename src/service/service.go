@@ -16,11 +16,12 @@ var (
 )
 
 type Service struct {
-	cfg         *config.Config
-	authRepo    AuthRepo
-	profileRepo ProfileRepo
-	vehicleRepo VehicleRepo
-	itemRepo    ItemRepo
+	cfg          *config.Config
+	authRepo     AuthRepo
+	profileRepo  ProfileRepo
+	vehicleRepo  VehicleRepo
+	itemRepo     ItemRepo
+	shipmentRepo ShipmentRepo
 }
 
 func New(
@@ -29,14 +30,16 @@ func New(
 	pr ProfileRepo,
 	vr VehicleRepo,
 	it ItemRepo,
+	sh ShipmentRepo,
 ) *Service {
 	once.Do(func() {
 		service = &Service{
-			cfg:         cfg,
-			authRepo:    aur,
-			profileRepo: pr,
-			vehicleRepo: vr,
-			itemRepo:    it,
+			cfg:          cfg,
+			authRepo:     aur,
+			profileRepo:  pr,
+			vehicleRepo:  vr,
+			itemRepo:     it,
+			shipmentRepo: sh,
 		}
 	})
 
@@ -76,4 +79,9 @@ type ItemRepo interface {
 	CreateItem(ctx context.Context, newItem *models.Item) (*models.Item, error)
 	GetAllItems(ctx context.Context) ([]models.Item, error)
 	UpdateItem(ctx context.Context, newItem *models.Item) error
+}
+
+type ShipmentRepo interface {
+	CreateShipment(ctx context.Context, newShipment *models.Shipment) (*models.Shipment, error)
+	UpdateShipment(ctx context.Context, newShipment *models.Shipment) error
 }

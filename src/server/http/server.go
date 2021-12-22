@@ -110,6 +110,8 @@ func (s *Server) buildHandler() (http.Handler, error) {
 	// external
 	v1Router.Handle("/vehicle", external.ThenFunc(s.veh.GetVehicle)).Methods(http.MethodGet)
 	v1Router.Handle("/item", external.ThenFunc(s.itm.GetAllItems)).Methods(http.MethodGet)
+	v1Router.Handle("/shipment", external.ThenFunc(s.veh.CreateShipment)).Methods(http.MethodPost)
+	v1Router.Handle("/shipment", external.ThenFunc(s.veh.UpdateShipment)).Methods(http.MethodPut)
 
 	// statistics
 	v1Router.Handle("/statistics", privateChain.ThenFunc(s.veh.GetStatistics)).Methods(http.MethodGet)

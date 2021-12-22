@@ -120,3 +120,43 @@ func (h *VehicleHandler) GetStatistics(w http.ResponseWriter, r *http.Request) {
 
 	SendResponse(w, http.StatusOK, resp)
 }
+
+func (h *VehicleHandler) CreateShipment(w http.ResponseWriter, r *http.Request) {
+	req := &models.Shipment{}
+
+	err := UnmarshalRequest(r, req)
+	if err != nil {
+		SendEmptyResponse(w, http.StatusBadRequest)
+
+		return
+	}
+
+	resp, err := h.service.CreateShipment(r.Context(), req)
+	if err != nil {
+		SendEmptyResponse(w, http.StatusInternalServerError)
+
+		return
+	}
+
+	SendResponse(w, http.StatusOK, resp)
+}
+
+func (h *VehicleHandler) UpdateShipment(w http.ResponseWriter, r *http.Request) {
+	req := &models.Shipment{}
+
+	err := UnmarshalRequest(r, req)
+	if err != nil {
+		SendEmptyResponse(w, http.StatusBadRequest)
+
+		return
+	}
+
+	err = h.service.UpdateShipment(r.Context(), req)
+	if err != nil {
+		SendEmptyResponse(w, http.StatusInternalServerError)
+
+		return
+	}
+
+	SendEmptyResponse(w, http.StatusOK)
+}
