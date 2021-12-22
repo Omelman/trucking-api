@@ -51,7 +51,7 @@ func (p *VehicleRepo) GetUserVehicles(ctx context.Context, userID int) ([]models
 	err := p.WithContext(ctx).
 		Model(&res).
 		Relation("Owner", func(query *orm.Query) (*orm.Query, error) {
-			return query.Where("id = ?", userID), nil
+			return query.Where("?TableAlias.id = ?", userID), nil
 		}).
 		Select()
 
@@ -62,7 +62,7 @@ func (p *VehicleRepo) DeleteVehicle(ctx context.Context, vehicleID int) error {
 	_, err := p.WithContext(ctx).
 		Model((*models.Vehicle)(nil)).
 		Where("id = ?", vehicleID).
-		Update()
+		Delete()
 
 	return toServiceError(err)
 }

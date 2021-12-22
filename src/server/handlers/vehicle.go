@@ -31,6 +31,9 @@ func (h *VehicleHandler) CreateVehicle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	userID := context.GetUserID(r.Context())
+	req.OwnerID = userID
+
 	err = h.service.CreateVehicle(r.Context(), req)
 	if err != nil {
 		SendEmptyResponse(w, http.StatusInternalServerError)

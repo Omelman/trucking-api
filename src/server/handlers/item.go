@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/Omelman/trucking-api/src/context"
 	"github.com/Omelman/trucking-api/src/models"
 	"github.com/Omelman/trucking-api/src/service"
 )
@@ -27,6 +28,9 @@ func (h *ItemHandler) CreateItem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	userID := context.GetUserID(r.Context())
+	req.UserID = userID
+
 	err = h.service.CreateItem(r.Context(), req)
 	if err != nil {
 		SendEmptyResponse(w, http.StatusInternalServerError)
@@ -37,14 +41,14 @@ func (h *ItemHandler) CreateItem(w http.ResponseWriter, r *http.Request) {
 	SendEmptyResponse(w, http.StatusCreated)
 }
 
-func (h *ItemHandler) UpdateShipment(w http.ResponseWriter, r *http.Request) {
+func (h *ItemHandler) UpdateItem(w http.ResponseWriter, r *http.Request) {
 	// logic
 }
 
-func (h *ItemHandler) GetShipment(w http.ResponseWriter, r *http.Request) {
+func (h *ItemHandler) GetItem(w http.ResponseWriter, r *http.Request) {
 	// logic
 }
 
-func (h *ItemHandler) GetAllCustomerShipment(w http.ResponseWriter, r *http.Request) {
+func (h *ItemHandler) DeleteItem(w http.ResponseWriter, r *http.Request) {
 	// logic
 }

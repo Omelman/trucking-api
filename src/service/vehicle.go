@@ -74,7 +74,7 @@ func (s *Service) DeleteUserVehicles(
 
 	allowed := false
 	for i := range vehicles {
-		if vehicles[i].OwnerID == userID {
+		if vehicles[i].ID == vehicleID {
 			allowed = true
 			break
 		}
