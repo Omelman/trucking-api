@@ -109,3 +109,14 @@ func (h *VehicleHandler) DeleteUserVehicle(w http.ResponseWriter, r *http.Reques
 
 	SendEmptyResponse(w, http.StatusOK)
 }
+
+func (h *VehicleHandler) GetStatistics(w http.ResponseWriter, r *http.Request) {
+	resp, err := h.service.GetStatistics(r.Context())
+	if err != nil {
+		SendEmptyResponse(w, http.StatusInternalServerError)
+
+		return
+	}
+
+	SendResponse(w, http.StatusOK, resp)
+}

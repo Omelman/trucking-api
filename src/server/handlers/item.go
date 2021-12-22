@@ -42,13 +42,35 @@ func (h *ItemHandler) CreateItem(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *ItemHandler) UpdateItem(w http.ResponseWriter, r *http.Request) {
-	// logic
+	req := &models.Item{}
+
+	err := UnmarshalRequest(r, req)
+	if err != nil {
+		SendEmptyResponse(w, http.StatusBadRequest)
+
+		return
+	}
+
+	userID := context.GetUserID(r.Context())
+	req.UserID = userID
+
+	err = h.service.UpdateItem(r.Context(), req)
+	if err != nil {
+		SendEmptyResponse(w, http.StatusInternalServerError)
+
+		return
+	}
+
+	SendEmptyResponse(w, http.StatusCreated)
 }
 
-func (h *ItemHandler) GetItem(w http.ResponseWriter, r *http.Request) {
-	// logic
-}
+func (h *ItemHandler) GetAllItems(w http.ResponseWriter, r *http.Request) {
+	resp, err := h.service.GetAllItems(r.Context())
+	if err != nil {
+		SendEmptyResponse(w, http.StatusInternalServerError)
 
-func (h *ItemHandler) DeleteItem(w http.ResponseWriter, r *http.Request) {
-	// logic
+		return
+	}
+
+	SendResponse(w, http.StatusOK, resp)
 }

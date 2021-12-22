@@ -35,6 +35,14 @@ func (s *Service) Validate(accessToken string) (*models.UserSession, error) {
 	}, nil
 }
 
+func (s *Service) ValidateExternalAPIToken(externalToken string) error {
+	if externalToken != s.cfg.ExternalToken {
+		return errors.New("External token is invalid")
+	}
+
+	return nil
+}
+
 func (s *Service) parseJWT(tokenString string) (*jwt.Token, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &models.Claims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(s.cfg.AccessTokenSecret), nil

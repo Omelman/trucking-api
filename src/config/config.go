@@ -8,6 +8,7 @@ type Config struct {
 	AccessTokenTTL    int      `mapstructure:"ACCESS_TOKEN_TTL_SEC" default:"900"` // seconds
 	AccessTokenSecret string   `mapstructure:"ACCESS_TOKEN_SECRET" default:""`
 	UserSessionTTL    int      `mapstructure:"USER_SESSION_TTL_SEC" default:"86400"` // seconds
+	ExternalToken     string   `mapstructure:"EXTERNAL_TOKEN_SECRET" default:"aqwer"`
 }
 
 type HTTP struct {

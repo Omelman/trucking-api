@@ -83,6 +83,8 @@ func (s *Server) buildHandler() (http.Handler, error) {
 		publicChain  = alice.New()
 		privateChain = publicChain.
 				Append(middleware.Auth)
+		external = publicChain.
+				Append(middleware.ExternalServiceAuth)
 
 		owner    = privateChain.Append(policy.Owner)
 		customer = privateChain.Append(policy.Customer)
@@ -96,13 +98,21 @@ func (s *Server) buildHandler() (http.Handler, error) {
 
 	// customer routes
 	v1Router.Handle("/item", customer.ThenFunc(s.itm.CreateItem)).Methods(http.MethodPost)
+	v1Router.Handle("/item", customer.ThenFunc(s.itm.UpdateItem)).Methods(http.MethodPut)
+	v1Router.Handle("/item", customer.ThenFunc(s.itm.GetAllItems)).Methods(http.MethodGet)
 
 	// owner routes
 	v1Router.Handle("/vehicle", owner.ThenFunc(s.veh.CreateVehicle)).Methods(http.MethodPost)
 	v1Router.Handle("/vehicle", owner.ThenFunc(s.veh.UpdateVehicle)).Methods(http.MethodPut)
-	v1Router.Handle("/vehicle", owner.ThenFunc(s.veh.GetVehicle)).Methods(http.MethodGet)
-	v1Router.Handle("/users/vehicle", owner.ThenFunc(s.veh.GetAllOwnerVehicle)).Methods(http.MethodGet)
+	v1Router.Handle("/users/vehicle", external.ThenFunc(s.veh.GetAllOwnerVehicle)).Methods(http.MethodGet)
 	v1Router.Handle("/users/vehicle/{vehicle_id:[0-9]+}", owner.ThenFunc(s.veh.DeleteUserVehicle)).Methods(http.MethodDelete)
+
+	// external
+	v1Router.Handle("/vehicle", external.ThenFunc(s.veh.GetVehicle)).Methods(http.MethodGet)
+	v1Router.Handle("/item", external.ThenFunc(s.itm.GetAllItems)).Methods(http.MethodGet)
+
+	// statistics
+	v1Router.Handle("/statistics", privateChain.ThenFunc(s.veh.GetStatistics)).Methods(http.MethodGet)
 
 	// private routes
 	v1Router.Handle("/logout", privateChain.ThenFunc(s.auh.Logout)).Methods(http.MethodDelete)

@@ -18,3 +18,28 @@ func (s *Service) CreateItem(
 
 	return nil
 }
+
+// GetAllItems gets all items.
+func (s *Service) GetAllItems(
+	ctx context.Context,
+) ([]models.Item, error) {
+	res, err := s.itemRepo.GetAllItems(ctx)
+	if err != nil {
+		return []models.Item{}, err
+	}
+
+	return res, nil
+}
+
+// UpdateItem update new item.
+func (s *Service) UpdateItem(
+	ctx context.Context,
+	item *models.Item,
+) error {
+	err := s.itemRepo.UpdateItem(ctx, item)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

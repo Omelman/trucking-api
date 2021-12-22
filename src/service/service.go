@@ -74,4 +74,6 @@ type VehicleRepo interface {
 
 type ItemRepo interface {
 	CreateItem(ctx context.Context, newItem *models.Item) (*models.Item, error)
+	GetAllItems(ctx context.Context) ([]models.Item, error)
+	UpdateItem(ctx context.Context, newItem *models.Item) error
 }
