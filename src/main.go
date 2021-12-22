@@ -8,6 +8,8 @@ import (
 	"sync"
 	"syscall"
 
+	"github.com/robfig/cron/v3"
+
 	"github.com/Omelman/trucking-api/src/server/handlers"
 	"github.com/Omelman/trucking-api/src/service"
 
@@ -61,6 +63,14 @@ func main() {
 	}
 
 	httpSrv.Run(ctx, wg)
+
+	c := cron.New()
+	_, err = c.AddFunc("@every 5m", srv.ScheduledLoadingShipment)
+	if err != nil {
+		log.WithError(err).Fatal("cron init failed")
+	}
+
+	c.Start()
 
 	// wait while services work
 	wg.Wait()
